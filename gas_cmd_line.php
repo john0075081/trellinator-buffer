@@ -29,7 +29,8 @@
 
         if(
            preg_match("/.*Processed Notification.*/",$resp)||
-           preg_match("/.*checkCCBBLib.*/",$resp)
+           preg_match("/.*checkCCBBLib.*/",$resp)||
+           preg_match("/.*Roger That.*/",$resp)
           )
         {
             echo "deleting".PHP_EOL;
