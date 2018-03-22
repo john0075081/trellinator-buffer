@@ -30,7 +30,8 @@
         if(
            preg_match("/.*Processed Notification.*/",$resp)||
            preg_match("/.*checkCCBBLib.*/",$resp)||
-           preg_match("/.*Roger That.*/",$resp)
+           preg_match("/.*Roger That.*/",$resp)||
+           preg_match("/.*Sorry, unable to open the file at this time.*/",$resp)
           )
         {
             echo "deleting".PHP_EOL;
