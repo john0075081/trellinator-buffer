@@ -9,7 +9,7 @@
         echo "reserved".PHP_EOL;
         $p->bury($job);
         $obj = json_decode($job->getData());
-
+//echo $job->getData().PHP_EOL;
         $success = true;
         $post_fields = $obj->post;
         echo "forward to: ".$obj->url.PHP_EOL;
@@ -31,6 +31,7 @@
            preg_match("/.*Processed Notification.*/",$resp)||
            preg_match("/.*checkCCBBLib.*/",$resp)||
            preg_match("/.*Roger That.*/",$resp)||
+           preg_match("/.*Action not allowed.*/",$resp)||
            preg_match("/.*Sorry, unable to open the file at this time.*/",$resp)||
            preg_match("/.*Sorry, the file you have requested does not exist.*/",$resp)
           )
