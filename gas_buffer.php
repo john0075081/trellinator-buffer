@@ -6,7 +6,7 @@
     use Symfony\Component\Process\Exception\ProcessFailedException;
     $p         = new Pheanstalk_Pheanstalk('127.0.0.1');
     $processes = array();
-    define('SCRIPT_MAX',3);
+    define('SCRIPT_MAX',5);
 
     while(1)
     {
@@ -44,17 +44,19 @@
             if(!isset($processes[$script_id]))
                 $processes[$script_id] = array();
 
+            shuffle($keys);
             foreach($keys as $key)
             {
                 if(
-                      (count($processes[$script_id]) < SCRIPT_MAX) &&
-                      (!isset($processes[$script_id][$tubes[$key]]))
+                      (count($processes[$script_id]) < SCRIPT_MAX)
+                      //&&(!isset($processes[$script_id][$tubes[$key]]))
                   )
                 {
                     $cmd     = 'php gas_cmd_line.php "'.$tubes[$key].'"';
                     $process = new Process($cmd);
                     $process->start();
-                    $processes[$script_id][$tubes[$key]] = $process;
+                    //$processes[$script_id][$tubes[$key]] = $process;
+                    $processes[$script_id][] = $process;
                 }
             }
         }
