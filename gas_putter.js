@@ -48,7 +48,7 @@ http.createServer(function (req, res) {
                 return p1;
             });
 
-            putJob(script_id,JSON.stringify({url: new_url,post: post}));
+            putJob(script_id,Buffer.from(JSON.stringify({url: new_url,post: post})).toString('base64'));
         });
     }
     
