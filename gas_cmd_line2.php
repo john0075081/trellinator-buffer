@@ -9,7 +9,7 @@
         echo "reserved".PHP_EOL;
         $p->bury($job);
         $obj = json_decode(base64_decode($job->getData()));
-echo $job->getData().PHP_EOL;
+echo base64_decode($job->getData()).PHP_EOL;
         $success = true;
         $post_fields = $obj->post;
         echo "forward to: ".$obj->url.PHP_EOL;
