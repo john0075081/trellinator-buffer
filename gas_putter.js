@@ -38,16 +38,12 @@ http.createServer(function (req, res) {
             //var post = qs.parse(body);
             var post = body;
             ///forward-gas-service-test/AKfycbzxvwNqwgXXnJEcs0ICFEAZyY67o9P2zSIPjH4mGG4oOEGYoWw
-            var new_url = req.url.replace(/^\/.+\/(.+)$/,function(match,p1,offset,string)
-            {
-                return "https://script.google.com/macros/s/"+p1+"/exec";
-            });
-
             var script_id = req.url.replace(/^\/.+\/(.+)$/,function(match,p1,offset,string)
             {
                 return p1;
             });
 
+            var new_url = "https://script.google.com/macros/s/"+script_id+"/exec";
             putJob(script_id,Buffer.from(JSON.stringify({url: new_url,post: post})).toString('base64'));
         });
     }
