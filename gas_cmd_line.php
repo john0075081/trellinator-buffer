@@ -29,13 +29,14 @@
         );                                                                                                                   
                                                                                                                          
         $resp = curl_exec($ch);
-echo $resp.PHP_EOL;
+//echo $resp.PHP_EOL;
         if(
            preg_match("/.*Processed Notification.*/",$resp)||
            preg_match("/.*checkCCBBLib.*/",$resp)||
            preg_match("/.*Roger That.*/",$resp)||
            preg_match("/.*Action not allowed.*/",$resp)||
            preg_match("/.*Sorry, unable to open the file at this time.*/",$resp)||
+           preg_match("/.*Sorry, unable to open the file at present.*/",$resp)||
            preg_match("/.*Authorization is required to perform that action..*/",$resp)||
            preg_match("/.*Sorry, the file you have requested does not exist.*/",$resp)
           )
