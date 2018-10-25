@@ -7,56 +7,60 @@
     $p         = new Pheanstalk_Pheanstalk('127.0.0.1');
     $processes = array();
     define('SCRIPT_MAX',5);
+    define('PROCESS_MAX',20);
 
     while(1)
     {
-        $to_execute = array();
-        
-        foreach($p->listTubes() as $tube)
+        if(count($processes) < PROCESS_MAX)
         {
-            try
+            $to_execute = array();
+            
+            foreach($p->listTubes() as $tube)
             {
-                $p->peekReady($tube);
-                if(preg_match("/^trellinator-(.+)-[0-9]+$/",$tube,$matches))
+                try
                 {
-                    $script_id = $matches[1];
-                    
-                    if(!isset($to_execute[$script_id]))
-                        $to_execute[$script_id] = array();
-                    
-                    $to_execute[$script_id][] = $tube;
+                    $p->peekReady($tube);
+                    if(preg_match("/^trellinator-(.+)-[0-9]+$/",$tube,$matches))
+                    {
+                        $script_id = $matches[1];
+                        
+                        if(!isset($to_execute[$script_id]))
+                            $to_execute[$script_id] = array();
+                        
+                        $to_execute[$script_id][] = $tube;
+                    }
+                }
+                
+                catch(Exception $e)
+                {
                 }
             }
-            
-            catch(Exception $e)
+    
+            foreach($to_execute as $script_id => $tubes)
             {
-            }
-        }
-
-        foreach($to_execute as $script_id => $tubes)
-        {
-            $select_rand = (SCRIPT_MAX < count($tubes)) ? SCRIPT_MAX:count($tubes);
-            $keys = array_rand($tubes,$select_rand);
-            
-            if(!is_array($keys))
-                $keys = array($keys);
-
-            if(!isset($processes[$script_id]))
-                $processes[$script_id] = array();
-
-            shuffle($keys);
-            foreach($keys as $key)
-            {
-                if(
-                      (count($processes[$script_id]) < SCRIPT_MAX)
-                      //&&(!isset($processes[$script_id][$tubes[$key]]))
-                  )
+                $select_rand = (SCRIPT_MAX < count($tubes)) ? SCRIPT_MAX:count($tubes);
+                $keys = array_rand($tubes,$select_rand);
+                
+                if(!is_array($keys))
+                    $keys = array($keys);
+    
+                if(!isset($processes[$script_id]))
+                    $processes[$script_id] = array();
+    
+                shuffle($keys);
+                foreach($keys as $key)
                 {
-                    $cmd     = 'php gas_cmd_line.php "'.$tubes[$key].'"';
-                    $process = new Process($cmd);
-                    $process->start();
-                    //$processes[$script_id][$tubes[$key]] = $process;
-                    $processes[$script_id][] = $process;
+                    if(
+                          (count($processes[$script_id]) < SCRIPT_MAX)
+                          //&&(!isset($processes[$script_id][$tubes[$key]]))
+                      )
+                    {
+                        $cmd     = 'php gas_cmd_line.php "'.$tubes[$key].'"';
+                        $process = new Process($cmd);
+                        $process->start();
+                        //$processes[$script_id][$tubes[$key]] = $process;
+                        $processes[$script_id][] = $process;
+                    }
                 }
             }
         }
