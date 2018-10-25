@@ -4,20 +4,6 @@ var bs = require('nodestalker'),
 client = bs.Client('127.0.0.1:11300');
 var qs = require('querystring');
 
-function putJob(script_id,data)
-{
-    var timeStamp = Math.floor(Date.now() / 20000);//20 second window
-    var use_tube = "trellinator-"+script_id+"-"+timeStamp;
-
-    client.use(use_tube).onSuccess(function(tube)
-    {
-        client.put(data).onSuccess(function()
-        {
-            client.ignore(use_tube);
-        });
-    });
-}
-
 var http = require('http');
 http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -38,13 +24,27 @@ http.createServer(function (req, res) {
             //var post = qs.parse(body);
             var post = body;
             ///forward-gas-service-test/AKfycbzxvwNqwgXXnJEcs0ICFEAZyY67o9P2zSIPjH4mGG4oOEGYoWw
-            var script_id = req.url.replace(/^\/.+\/(.+)$/,function(match,p1,offset,string)
-            {
-                return p1;
-            });
-
+            var parts = /^\/.+\/(.+)$/.exec(req.url);
+            var script_id = parts[1];
             var new_url = "https://script.google.com/macros/s/"+script_id+"/exec";
-            putJob(script_id,Buffer.from(JSON.stringify({url: new_url,post: post})).toString('base64'));
+            
+            if([
+                "COPY THIS LINE AND PASTE IN A SCRIPT ID TO BLOCK",
+                "END BLOCKED SCRIPT IDS"].indexOf(script_id) == -1)
+            {
+                //putJob(script_id,Buffer.from(JSON.stringify({url: new_url,post: post})).toString('base64'));
+                var data = Buffer.from(JSON.stringify({url: new_url,post: post})).toString('base64');
+                var timeStamp = Math.floor(Date.now() / 20000);//20 second window
+                var use_tube = "trellinator-"+script_id+"-"+timeStamp;
+            
+                client.use(use_tube).onSuccess(function(tube)
+                {
+                    client.put(this.dataAsy).onSuccess(function()
+                    {
+                        client.ignore(use_tube);
+                    });
+                }.bind({dataAsy:data}));
+            }
         });
     }
     
