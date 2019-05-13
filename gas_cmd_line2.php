@@ -8,13 +8,23 @@
     {
         echo "reserved".PHP_EOL;
         $p->bury($job);
+
         $obj = json_decode(base64_decode($job->getData()));
 echo base64_decode($job->getData()).PHP_EOL;
+
+if(strpos(base64_decode($job->getData()),"Contractor Directory") === false)
+{
         $success = true;
         $post_fields = $obj->post;
-        echo "forward to: ".$obj->url.PHP_EOL;
-                    
-        $ch = curl_init($obj->url);
+
+        if(isset($obj->get))
+            $fwd_url = http_build_query($obj->get) ? $obj->url.'?'.http_build_query($obj->get):$obj->url;
+        else
+            $fwd_url = $obj->url;
+
+        echo "forward to: ".$fwd_url.PHP_EOL;
+
+        $ch = curl_init($fwd_url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);                                                                  
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
@@ -32,12 +42,14 @@ echo base64_decode($job->getData()).PHP_EOL;
 echo $resp.PHP_EOL;
         if(
            preg_match("/.*Processed Notification.*/",$resp)||
+           preg_match("/.*No Post Data.*/",$resp)||
            preg_match("/.*checkCCBBLib.*/",$resp)||
            preg_match("/.*Roger That.*/",$resp)||
-           preg_match("/.*Action not allowed.*/",$resp)||
-           preg_match("/.*Sorry, unable to open the file at this time.*/",$resp)||
-           preg_match("/.*Authorization is required to perform that action..*/",$resp)||
-           preg_match("/.*Sorry, the file you have requested does not exist.*/",$resp)
+//           preg_match("/.*Action not allowed.*/",$resp)||
+//           preg_match("/.*Sorry, unable to open the file at this time.*/",$resp)||
+//           preg_match("/.*Authorization is required to perform that action..*/",$resp)||
+           preg_match("/.*Sorry, the file you have requested does not exist.*/",$resp)||
+           preg_match("/.*Google Drive – Page Not Found.*/",$resp)
           )
         {
             echo "deleting".PHP_EOL;
@@ -50,10 +62,20 @@ echo $resp.PHP_EOL;
             echo $resp.PHP_EOL;
             $p->kickJob($job);
         }
+}
+
+else
+{
+            echo "deleting CD".PHP_EOL;
+            $p->delete($job);
+}
     }
     
     else
+    {
         echo "timed out on reserve".PHP_EOL;
+    }
+
     
     $p->watchOnly("default");
     exit(0);
