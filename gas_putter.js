@@ -1,6 +1,5 @@
 #!/usr/bin/env nodejs
-var bs = require('nodestalker'),
-client = bs.Client('127.0.0.1:11300');
+var bs = require('nodestalker');
 var url = require('url');
 var qs = require('querystring');
 
@@ -15,7 +14,6 @@ http.createServer(function (req, res) {
         var body = '';
 
         req.on('data', function (data) {
-console.log("data: "+data);
             body += data;
 
             // Too much POST data, kill the connection!
@@ -25,6 +23,7 @@ console.log("data: "+data);
         });
 
         req.on('end', function () {
+            var client = bs.Client('127.0.0.1:11300');
             //var post = qs.parse(body);
             var post = body;
             ///forward-gas-service-test/AKfycbzxvwNqwgXXnJEcs0ICFEAZyY67o9P2zSIPjH4mGG4oOEGYoWw
@@ -43,11 +42,11 @@ console.log("data: "+data);
             {
                 client.use(use_tube).onSuccess(function(tube)
                 {
-                    client.put(this.dataAsy).onSuccess(function()
+                    client.put(data).onSuccess(function()
                     {
-                        client.ignore(use_tube);
+                        client.disconnect();
                     });
-                }.bind({dataAsy:data}));
+                });
             }
         });
     }
