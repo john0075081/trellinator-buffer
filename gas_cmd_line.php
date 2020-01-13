@@ -29,7 +29,7 @@
         //https://stackoverflow.com/questions/35359720/php-with-curl-follow-redirect-with-post
         curl_setopt ( $ch, CURLOPT_POSTREDIR, 3);
         curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, TRUE);
-//        curl_setopt($ch, CURLOPT_TIMEOUT, 120);                                                                      
+        curl_setopt($ch, CURLOPT_TIMEOUT, 420);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
         'Content-Type: application/json',                                                                                
         'Content-Length: ' . strlen($post_fields))                                                                       
