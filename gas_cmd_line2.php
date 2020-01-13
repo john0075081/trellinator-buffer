@@ -8,12 +8,8 @@
     {
         echo "reserved".PHP_EOL;
         $p->bury($job);
-
         $obj = json_decode(base64_decode($job->getData()));
 echo base64_decode($job->getData()).PHP_EOL;
-
-if(strpos(base64_decode($job->getData()),"Contractor Directory") === false)
-{
         $success = true;
         $post_fields = $obj->post;
 
@@ -24,7 +20,16 @@ if(strpos(base64_decode($job->getData()),"Contractor Directory") === false)
 
         echo "forward to: ".$fwd_url.PHP_EOL;
 
+if(stripos($fwd_url,"AKfycbxr7hsVFXYJD7tdRj4fApxLytWHrLGdnYCa1OjHLYREsDkwVAel") !== false)
+{
+    echo "IS MISALLOCATED".PHP_EOL;
+    $p->delete($job);
+}
+
+else
+{
         $ch = curl_init($fwd_url);
+                    
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);                                                                  
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
@@ -37,7 +42,7 @@ if(strpos(base64_decode($job->getData()),"Contractor Directory") === false)
         'Content-Type: application/json',                                                                                
         'Content-Length: ' . strlen($post_fields))                                                                       
         );                                                                                                                   
-                                                                                                                         
+echo "posting now: ".PHP_EOL;                                                                                                                         
         $resp = curl_exec($ch);
 echo $resp.PHP_EOL;
         if(
@@ -47,7 +52,9 @@ echo $resp.PHP_EOL;
            preg_match("/.*Roger That.*/",$resp)||
 //           preg_match("/.*Action not allowed.*/",$resp)||
 //           preg_match("/.*Sorry, unable to open the file at this time.*/",$resp)||
-//           preg_match("/.*Authorization is required to perform that action..*/",$resp)||
+//           preg_match("/.*Sorry, unable to open the file at present.*/",$resp)||
+//           preg_match("/.*Authorization is required to perform that action.*/",$resp)||
+//           preg_match("/.*Authorisation is required to perform that action.*/",$resp)||
            preg_match("/.*Sorry, the file you have requested does not exist.*/",$resp)||
            preg_match("/.*Google Drive – Page Not Found.*/",$resp)
           )
@@ -63,19 +70,10 @@ echo $resp.PHP_EOL;
             $p->kickJob($job);
         }
 }
-
-else
-{
-            echo "deleting CD".PHP_EOL;
-            $p->delete($job);
-}
     }
     
     else
-    {
         echo "timed out on reserve".PHP_EOL;
-    }
-
     
     $p->watchOnly("default");
     exit(0);
