@@ -7,7 +7,7 @@
     $p         = new Pheanstalk_Pheanstalk('127.0.0.1');
     $processes = array();
     define('SCRIPT_MAX',5);
-    define('PROCESS_MAX',20);
+    define('PROCESS_MAX',50);
 
     while(1)
     {
@@ -60,6 +60,11 @@
                         $process->start();
                         //$processes[$script_id][$tubes[$key]] = $process;
                         $processes[$script_id][] = $process;
+                    }
+                    
+                    else
+                    {
+                        echo "not executing: ".$script_id." because too many".PHP_EOL;
                     }
                 }
             }
