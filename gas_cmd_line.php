@@ -67,6 +67,7 @@
                 catch(Exception $exc)
                 {
                     $done = TRUE;
+                    echo $exc->getMessage().PHP_EOL;
                 }
             }
 
