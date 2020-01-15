@@ -8,6 +8,7 @@
     $processes = array();
     define('SCRIPT_MAX',5);
     define('PROCESS_MAX',50);
+echo 'SCRIPT START'.PHP_EOL;
 
     while(1)
     {
@@ -56,6 +57,7 @@
                       )
                     {
                         $cmd     = 'php gas_cmd_line.php "'.$tubes[$key].'"';
+echo 'executing: '.$cmd.PHP_EOL;
                         $process = new Process($cmd);
                         $process->start();
                         //$processes[$script_id][$tubes[$key]] = $process;
@@ -77,14 +79,26 @@
                 if(!$proc->isRunning())
                 {
                     unset($processes[$script_id][$tube]);
-                    //echo "finished for: ".$tube.PHP_EOL;
-                    //echo "OUTPUT: ".$proc->getOutput().PHP_EOL;
+                    echo "finished for: ".$script_id.PHP_EOL;
+                    $output = trim($proc->getOutput());
+
+                    if(stripos($output,'deleted') === FALSE)
+                    {
+                        if($script_id != 'AKfycbxjRKxf7iwVLFYKIVGaUNyRe1cdIejUQQhvsoFCC7UXqUCBNSM')
+                        {
+                            echo 'FAILED '.$script_id.PHP_EOL;
+                            echo $output.PHP_EOL;
+                        }
+                    }
+                    
+                    else
+                        echo 'successfully closed or kicked: '.$script_id.PHP_EOL;
                 }
             }
 
             if(count($processes[$script_id]) == 0)
             {
-                //echo "unsetting: ".$script_id.PHP_EOL;
+                echo "unsetting: ".$script_id.PHP_EOL;
                 unset($processes[$script_id]);
             }
         }
