@@ -25,5 +25,6 @@
             }
         }
 
+        echo 'finished sleeping'.PHP_EOL;
         usleep(100000);
     }
