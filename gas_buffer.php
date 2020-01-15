@@ -84,11 +84,8 @@ echo 'executing: '.$cmd.PHP_EOL;
 
                     if(stripos($output,'deleted') === FALSE)
                     {
-                        if($script_id != 'AKfycbxjRKxf7iwVLFYKIVGaUNyRe1cdIejUQQhvsoFCC7UXqUCBNSM')
-                        {
-                            echo 'FAILED '.$script_id.PHP_EOL;
-                            echo $output.PHP_EOL;
-                        }
+                        echo 'FAILED '.$script_id.PHP_EOL;
+                        echo $output.PHP_EOL;
                     }
                     
                     else
