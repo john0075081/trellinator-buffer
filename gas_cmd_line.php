@@ -51,8 +51,33 @@
            preg_match("/.*Google Drive – Page Not Found.*/",$resp)
           )
         {
-            echo "deleting".PHP_EOL;
-            $p->delete($job);
+//            echo "deleting".PHP_EOL;
+            $done = FALSE;
+            $count = 0;
+            
+            while(!$done && ($count < 10))
+            {
+                $count++;
+
+                try
+                {
+                    $p->delete($job);
+                }
+                
+                catch(Exception $exc)
+                {
+                    $done = TRUE;
+                }
+            }
+
+            if(!$done)
+            {
+                echo "kicking and pausing: ".$tube.'because cannot delete job'.PHP_EOL;
+                $p->kickJob($job);
+            }
+            
+            else
+                echo 'deleted'.PHP_EOL;
         }
 
         else
